@@ -1,0 +1,39 @@
+{
+  "beats": [
+    {
+      "id": "01",
+      "title": "A downhill step goes wrong [00:00–00:10.5]",
+      "text": "This downhill step makes loss rise. We’re minimizing one bowl: half w squared. Start at w equals one; loss is point-five."
+    },
+    {
+      "id": "02",
+      "title": "The direction is right [00:10.5–00:21.4]",
+      "text": "At w equals one, slope is one. Gradient points uphill, right; its negative points left. Direction tells us where, not how far."
+    },
+    {
+      "id": "03",
+      "title": "The step is too long [00:21.4–00:31.7]",
+      "text": "The update subtracts learning rate times gradient. Set it to two-point-four: from one, we land at negative one-point-four, past the minimum."
+    },
+    {
+      "id": "04",
+      "title": "Check the destination [00:31.7–00:41.5]",
+      "text": "Crossing the bottom isn’t automatically bad. Here, loss rises from point-five to point-nine-eight. This step landed higher than it began."
+    },
+    {
+      "id": "05",
+      "title": "What controls overshoot? [00:41.5–00:50.5]",
+      "text": "Gradient gives the local slope; learning rate sets distance. In this curved bowl, two-point-four is too large for that slope."
+    },
+    {
+      "id": "06",
+      "title": "A shorter step [00:50.5–00:61.2]",
+      "text": "Keep the bowl and start; change rate to one-point-five. We still cross, but loss falls to point-one-two-five. Crossing alone isn’t failure."
+    },
+    {
+      "id": "07",
+      "title": "The takeaway [00:61.2–00:69.0]",
+      "text": "A step too large for the curve can raise loss. Real loss shapes change, so a safe learning rate can vary."
+    }
+  ]
+}

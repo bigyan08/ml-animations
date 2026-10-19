@@ -1,14 +1,12 @@
 """A single quadratic bowl shows why an oversized learning rate can fail."""
 
-import json
-from pathlib import Path
 
 import manimgx as m
 
+from shared.scenes import NarratedScene
+
 from model import loss
 
-HERE = Path(__file__).resolve().parent
-OUTPUT = HERE.parents[3] / "media/mathematics/optimization/gradient_descent_overshoot"
 
 m.config.pixel_width = 1080
 m.config.pixel_height = 1920
@@ -35,9 +33,9 @@ def equation(value, y, size=40, color=WHITE):
     return result
 
 
-class GradientDescentOvershoot(m.Scene):
+class GradientDescentOvershoot(NarratedScene):
     def construct(self):
-        self.beats = json.loads((OUTPUT / "narration.json").read_text())["beats"]
+        self.load_narration(__file__)
         self.axes = m.Axes(
             x_range=[-2, 2, 1], y_range=[0, 2.2, 0.5],
             x_length=6.6, y_length=4.0, tips=False,
@@ -62,7 +60,7 @@ class GradientDescentOvershoot(m.Scene):
         self.values = equation(r"L(1)=0.50\qquad L(-1.4)=0.98", -3.25, 36)
 
         # Hook: the same bowl contains a start point and a worse destination.
-        duration = self.begin(0)
+        duration = self.begin_beat(0)
         self.add(self.axes, self.bowl, self.axes_labels, self.start,
                  self.large_end, self.headline)
         self.play(m.GrowArrow(self.hook_step),
@@ -73,7 +71,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.8))
 
         # The negative gradient gives a direction on the parameter axis.
-        duration = self.begin(1)
+        duration = self.begin_beat(1)
         next_headline = label("Direction is not distance", 5.9, 45, WHITE)
         grad_right = m.Arrow(self.axes.c2p(1, 0), self.axes.c2p(1.75, 0),
                              buff=0, color=PINK, stroke_width=5)
@@ -89,7 +87,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.2))
 
         # Gradient descent also chooses a distance through its learning rate.
-        duration = self.begin(2)
+        duration = self.begin_beat(2)
         next_headline = label("The step is too long", 5.9, 48, WHITE)
         step_calculation = equation(
             r"\eta=2.4\qquad w'=1-2.4(1)=-1.4", -3.25, 36, PINK)
@@ -103,7 +101,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.2))
 
         # Compare actual objective values, rather than calling every crossing bad.
-        duration = self.begin(3)
+        duration = self.begin_beat(3)
         next_headline = label("Check the destination", 5.9, 48, WHITE)
         self.play(m.Transform(self.headline, next_headline),
                   m.FadeOut(step_calculation),
@@ -113,7 +111,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.1))
 
         # A tangent shows what the derivative knows: the local slope at w=1.
-        duration = self.begin(4)
+        duration = self.begin_beat(4)
         next_headline = label("Local slope. Long jump.", 5.9, 46, WHITE)
         tangent = self.axes.plot(lambda w: 0.5 + (w - 1), x_range=[0.2, 1.8],
                                  color=YELLOW, stroke_width=3)
@@ -124,7 +122,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.0))
 
         # Same bowl and start, with a shorter step that still crosses the minimum.
-        duration = self.begin(5)
+        duration = self.begin_beat(5)
         next_headline = label("Crossing can still help", 5.9, 44, WHITE)
         moderate_end = m.Dot(self.axes.c2p(-0.5, loss(-0.5)), radius=0.12,
                              color=TEAL)
@@ -142,7 +140,7 @@ class GradientDescentOvershoot(m.Scene):
         self.wait(max(0, duration - 1.2))
 
         # One focused rule and its boundary.
-        duration = self.begin(6)
+        duration = self.begin_beat(6)
         next_headline = label("Match the step to the curve", 5.9, 44, WHITE)
         scope = label("Too large for this bowl’s curvature", -5.55, 36, MUTED)
         self.play(m.Transform(self.headline, next_headline),
@@ -152,12 +150,3 @@ class GradientDescentOvershoot(m.Scene):
         self.play(m.FadeIn(self.large_end), m.FadeIn(self.end_note),
                   m.Indicate(self.large_end, color=PINK), run_time=0.5)
         self.wait(max(0, duration - 1.5))
-
-    def begin(self, index):
-        beat = self.beats[index]
-        self.add_sound(OUTPUT / beat["audio"])
-        for caption in beat["captions"]:
-            self.add_subcaption(caption["text"],
-                                duration=caption["end"] - caption["start"],
-                                offset=caption["start"])
-        return beat["duration"]

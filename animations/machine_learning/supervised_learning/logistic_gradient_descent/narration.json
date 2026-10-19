@@ -1,0 +1,44 @@
+{
+  "beats": [
+    {
+      "id": "01",
+      "title": "01 — The question",
+      "text": "How does logistic regression learn? Two weights move downhill, turning prediction errors into a better model."
+    },
+    {
+      "id": "02",
+      "title": "02 — Two adjustable weights",
+      "text": "The sigmoid turns a weighted sum into a probability. Here, the bias stays at zero."
+    },
+    {
+      "id": "03",
+      "title": "03 — Read the landscape",
+      "text": "Each point is a pair of weights. Contours join equal cross-entropy loss. Inner contours mean lower loss."
+    },
+    {
+      "id": "04",
+      "title": "04 — Find downhill",
+      "text": "The gradient points steepest uphill. Move in the opposite direction. The learning rate sets the step size."
+    },
+    {
+      "id": "05",
+      "title": "05 — Where the gradient comes from",
+      "text": "Prediction minus label measures each example's error. Multiply by its features to find each weight's contribution."
+    },
+    {
+      "id": "06",
+      "title": "06 — Repeat",
+      "text": "Average those contributions, then subtract. Repeat: loss falls, and updates shrink near the minimum."
+    },
+    {
+      "id": "07",
+      "title": "07 — The reason it works",
+      "text": "Locally, loss changes by approximately minus the learning rate times the squared gradient length. Small enough steps decrease loss."
+    },
+    {
+      "id": "08",
+      "title": "08 — Takeaway",
+      "text": "Logistic loss is convex. With a suitable step size, this overlapping dataset leads to a finite global minimum."
+    }
+  ]
+}

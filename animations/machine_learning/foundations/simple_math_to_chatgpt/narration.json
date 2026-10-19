@@ -1,0 +1,59 @@
+{
+  "beats": [
+    {
+      "id": "01",
+      "title": "From arithmetic to AI",
+      "text": "What if I told you that ChatGPT, recommendation systems, and image AI share something surprisingly simple: a prediction, a mistake, and a correction? Let us build that idea from the ground up."
+    },
+    {
+      "id": "02",
+      "title": "One prediction",
+      "text": "Let us start with the smallest possible idea. Suppose a model predicts a value: maybe it predicts seven. But the actual answer is ten. That means the model made an error. Prediction minus actual gives negative three."
+    },
+    {
+      "id": "03",
+      "title": "Turn error into loss",
+      "text": "To measure how wrong the model is, we calculate something called loss. Loss is a number that tells us how bad the prediction was. Here, we square the error, giving nine. A more distant prediction has higher loss; a closer prediction has lower loss. Other tasks use different losses."
+    },
+    {
+      "id": "04",
+      "title": "Follow the gradient",
+      "text": "Now the model needs to improve. But how does it know what to change? This is where gradient descent comes in. Imagine loss as a landscape of hills and valleys. The model wants to move downhill toward lower error. The gradient tells us the local uphill slope with respect to a parameter, so we take a small step the other way. In this tiny model, the prediction itself is the parameter. One update moves seven to seven point six, reducing loss."
+    },
+    {
+      "id": "05",
+      "title": "Repeat the learning loop",
+      "text": "Prediction. Measure loss. Adjust. Repeat. That is a core learning loop in machine learning. Across training, the model aims to improve its predictions. Individual updates can still go wrong, so the step size matters."
+    },
+    {
+      "id": "06",
+      "title": "Fit many examples",
+      "text": "Now instead of just one prediction, imagine many data points. For example, house sizes and house prices. The model tries to draw a line that fits the data. At first, the line is bad. Gradient descent adjusts its slope and intercept to reduce the average loss across the examples. Watch the fit improve."
+    },
+    {
+      "id": "07",
+      "title": "Combine simple functions",
+      "text": "But real world problems are often too complex for one line. So we combine many small mathematical functions. Neural networks use weighted sums followed by nonlinear transformations. Those bends are crucial: stacking only linear operations would still give a linear function. Working together, these units can model much more complicated relationships."
+    },
+    {
+      "id": "08",
+      "title": "Connect units into layers",
+      "text": "That collection of connected mathematical units is called a neural network. Each unit takes in information, transforms it, and passes it forward. Training adjusts their parameters together. Layer by layer, the network can learn useful representations. In image models, early layers may detect simple edges, and later layers can combine them into more complex features."
+    },
+    {
+      "id": "09",
+      "title": "Add depth",
+      "text": "When we stack many layers, we get deep learning. With suitable architectures, data, and training tasks, these systems can handle images, speech, language, and other complex problems. The jump from one prediction to modern AI uses the same learning principle at a much larger scale, but depth alone does not guarantee success."
+    },
+    {
+      "id": "10",
+      "title": "Make the language connection",
+      "text": "That is how we go from a simple error correction loop to systems that recognize faces, recommend videos, translate languages, generate images, and power tools like ChatGPT. For language models, a key training task predicts the next token: a piece of text. Loss scores the predicted probabilities against training text. Transformer attention uses context, and further training helps produce useful responses."
+    },
+    {
+      "id": "11",
+      "title": "The shared principle",
+      "text": "So a shared idea at the heart of modern machine learning is this: make a prediction, measure the error, adjust the model, and repeat. From one mistake, to many corrections, to useful patterns at enormous scale. The data and architecture matter, and even impressive systems can still make mistakes."
+    }
+  ]
+}

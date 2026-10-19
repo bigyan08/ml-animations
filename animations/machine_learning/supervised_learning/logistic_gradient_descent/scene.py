@@ -1,16 +1,14 @@
 """A vertical, narrated explanation using the actual logistic-loss contours."""
 
-import json
-from pathlib import Path
 
 import contourpy
 import manimgx as m
+
+from shared.scenes import NarratedScene
 import numpy as np
 
 from model import gradient, loss, trajectory
 
-HERE = Path(__file__).resolve().parent
-OUTPUT = HERE.parents[3] / "media/machine_learning/supervised_learning/logistic_gradient_descent"
 m.config.pixel_width = 1080
 m.config.pixel_height = 1920
 m.config.frame_rate = 30
@@ -32,10 +30,9 @@ def math(value, y, size=34, color=WHITE):
     return m.MathTex(value, font_size=size, color=color).move_to([0, y, 0])
 
 
-class LogisticGradientDescent(m.Scene):
+class LogisticGradientDescent(NarratedScene):
     def construct(self):
-        narration = json.loads((OUTPUT / "narration.json").read_text())
-        self.beats = narration["beats"]
+        self.load_narration(__file__)
         self.add(text("MACHINE LEARNING  /  THE WHY", 5.85, 26, TEAL))
         title = text("Learning, one\ndownhill step at a time", 4.87, 38)
         self.add(title)
@@ -43,7 +40,7 @@ class LogisticGradientDescent(m.Scene):
         self.add(footer)
 
         # 1. A visual question: a path through weight space.
-        duration = self.begin(0)
+        duration = self.begin_beat(0)
         dots = m.VGroup(*[
             m.Dot([x, 1.8 - 0.35 * i, 0], radius=0.10, color=TEAL)
             for i, x in enumerate([-2.4, -1.4, -0.55, 0.15, 0.7, 1.1])
@@ -59,7 +56,7 @@ class LogisticGradientDescent(m.Scene):
                   m.FadeOut(description), run_time=0.6)
 
         # 2. Define exactly the two free parameters used below.
-        duration = self.begin(1)
+        duration = self.begin_beat(1)
         model_formula = math(r"p=\sigma(w_1x_1+w_2x_2)", 2.75, 42)
         sigmoid_formula = math(r"\sigma(z)=\frac{1}{1+e^{-z}}", 1.1, 39, TEAL)
         feature_label = text("features → score → probability", -0.25, 26, MUTED)
@@ -74,7 +71,7 @@ class LogisticGradientDescent(m.Scene):
         self.play(m.FadeOut(model_group), run_time=0.6)
 
         # 3. Numerically computed contours, not decorative ellipses.
-        duration = self.begin(2)
+        duration = self.begin_beat(2)
         self.axes = m.Axes(x_range=[-3, 3, 1], y_range=[-3, 3, 1],
                            x_length=5.6, y_length=5.6, tips=False,
                            axis_config={"color": "#52617C", "stroke_width": 2,
@@ -106,7 +103,7 @@ class LogisticGradientDescent(m.Scene):
         self.wait(duration - 2.0)
 
         # 4. The actual negative gradient at the starting point.
-        duration = self.begin(3)
+        duration = self.begin_beat(3)
         w = self.path[0]
         uphill = gradient(w)
         origin = self.axes.c2p(*w)
@@ -124,14 +121,14 @@ class LogisticGradientDescent(m.Scene):
         self.set_counter(1)
 
         # 5. Explain the analytic gradient while holding the landscape fixed.
-        duration = self.begin(4)
+        duration = self.begin_beat(4)
         explanation = text("Prediction error × feature", 3.95, 27, TEAL)
         gradient_formula = math(r"\nabla L=\frac{1}{n}\sum_{i=1}^{n}(p_i-y_i)\mathbf{x}_i", -3.75, 40)
         self.play(m.Transform(legend, explanation), m.Transform(update, gradient_formula), run_time=1)
         self.wait(duration - 1)
 
         # 6. Trace the computed iterates, preserving every intermediate point.
-        duration = self.begin(5)
+        duration = self.begin_beat(5)
         self.play(m.Transform(legend, text("Small steps. Better predictions.", 3.95, 26, TEAL)),
                   m.Transform(update, math(r"\eta=1.5\qquad L:\ 1.342\ \longrightarrow\ 0.609", -3.75, 30)),
                   run_time=0.7)
@@ -146,14 +143,14 @@ class LogisticGradientDescent(m.Scene):
         self.wait(0.8)
 
         # 7. First-order Taylor reasoning: the central "why".
-        duration = self.begin(6)
+        duration = self.begin_beat(6)
         reason = math(r"\Delta L\approx-\eta\|\nabla L\|^2\leq 0", -3.75, 35, TEAL)
         self.play(m.Transform(legend, text("Why downhill works locally", 3.95, 28)),
                   m.Transform(update, reason), run_time=1.0)
         self.wait(duration - 1.0)
 
         # 8. Qualified conclusion: convexity alone does not ensure a finite minimizer.
-        duration = self.begin(7)
+        duration = self.begin_beat(7)
         self.play(m.Transform(legend, text("Convex loss. A global minimum.", 3.95, 27, TEAL)),
                   m.Transform(update, text("Overlapping data • suitable step size", -3.75, 24, MUTED)),
                   m.Indicate(optimum, color=TEAL, scale_factor=1.8), run_time=1.2)
@@ -167,11 +164,3 @@ class LogisticGradientDescent(m.Scene):
         self.remove(self.counter)
         self.counter = self.status(step)
         self.add(self.counter)
-
-    def begin(self, index):
-        beat = self.beats[index]
-        self.add_sound(OUTPUT / beat["audio"])
-        for caption in beat["captions"]:
-            self.add_subcaption(caption["text"], duration=caption["end"] - caption["start"],
-                                offset=caption["start"])
-        return beat["duration"]

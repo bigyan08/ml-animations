@@ -1,14 +1,12 @@
 """Follow one house-price example through one supervised-learning update."""
 
-import json
-from pathlib import Path
 
 import manimgx as m
 
+from shared.scenes import NarratedScene
+
 from model import ACTUAL_PRICE, INITIAL_W, LEARNING_RATE, SIZE, gradient, loss, prediction, update
 
-HERE = Path(__file__).resolve().parent
-OUTPUT = HERE.parents[3] / "media/machine_learning/supervised_learning/house_price_learning_step"
 
 m.config.pixel_width = 1080
 m.config.pixel_height = 1920
@@ -42,9 +40,9 @@ def equation(value, y, size=48, color=WHITE):
     return result
 
 
-class HousePriceLearningStep(m.Scene):
+class HousePriceLearningStep(NarratedScene):
     def construct(self):
-        self.beats = json.loads((OUTPUT / "narration.json").read_text())["beats"]
+        self.load_narration(__file__)
         self.header = headline("One mistake → one update", size=40)
         self.house = text("HOUSE  •  1,000 sq ft", 3.45, 38, MUTED)
         self.predicted = text("Prediction     $100,000", 2.15, 40, YELLOW)
@@ -63,7 +61,7 @@ class HousePriceLearningStep(m.Scene):
         self.new_weight = equation(r"w: 1\longrightarrow1.5", -1.0, 47, YELLOW)
 
         # Hook: put the model's visible miss next to its training label.
-        duration = self.begin(0)
+        duration = self.begin_beat(0)
         self.add(self.header, self.house, self.predicted, self.actual)
         self.play(m.Indicate(self.predicted, color=PINK, scale_factor=1.08),
                   m.Indicate(self.actual, color=TEAL, scale_factor=1.08),
@@ -71,14 +69,14 @@ class HousePriceLearningStep(m.Scene):
         self.wait(max(0, duration - 1.0))
 
         # Define the units and model that produced the displayed prediction.
-        duration = self.begin(1)
+        duration = self.begin_beat(1)
         next_header = headline("The model makes a guess", size=42)
         self.play(m.Transform(self.header, next_header), m.Write(self.model),
                   m.FadeIn(self.model_note), run_time=0.8)
         self.wait(max(0, duration - 0.8))
 
         # Turn the mismatch into one explicit objective value.
-        duration = self.begin(2)
+        duration = self.begin_beat(2)
         next_header = headline("Turn error into loss", size=42)
         self.play(m.Transform(self.header, next_header), m.FadeOut(self.model),
                   m.FadeOut(self.model_note), m.Write(self.error),
@@ -86,7 +84,7 @@ class HousePriceLearningStep(m.Scene):
         self.wait(max(0, duration - 0.9))
 
         # The negative slope means a positive change to w lowers loss here.
-        duration = self.begin(3)
+        duration = self.begin_beat(3)
         next_header = headline("Use the loss slope", size=42)
         direction = m.Arrow([-1.2, -2.9, 0], [1.2, -2.9, 0], buff=0,
                             color=YELLOW, stroke_width=7)
@@ -101,7 +99,7 @@ class HousePriceLearningStep(m.Scene):
         self.wait(max(0, duration - 1.1))
 
         # Re-evaluate the same house to check the direction of the update.
-        duration = self.begin(4)
+        duration = self.begin_beat(4)
         next_header = headline("The mistake gets smaller", size=40)
         self.play(m.Transform(self.header, next_header), m.FadeOut(self.gradient_eq),
                   m.FadeOut(self.eta_note), m.FadeOut(direction),
@@ -113,7 +111,7 @@ class HousePriceLearningStep(m.Scene):
         self.wait(max(0, duration - 1.0))
 
         # Summarize the loop and qualify what this example demonstrates.
-        duration = self.begin(5)
+        duration = self.begin_beat(5)
         next_header = headline("Training repeats the loop", size=40)
         scope = text("One training example\nNew houses may differ", -3.7, 24, MUTED)
         self.play(m.Transform(self.header, next_header), m.FadeOut(self.house),
@@ -122,12 +120,3 @@ class HousePriceLearningStep(m.Scene):
                   m.FadeIn(self.loop), m.FadeIn(self.loop2), m.FadeIn(scope),
                   run_time=0.9)
         self.wait(max(0, duration - 0.9))
-
-    def begin(self, index):
-        beat = self.beats[index]
-        self.add_sound(OUTPUT / beat["audio"])
-        for caption in beat["captions"]:
-            self.add_subcaption(caption["text"],
-                                duration=caption["end"] - caption["start"],
-                                offset=caption["start"])
-        return beat["duration"]

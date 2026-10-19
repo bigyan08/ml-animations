@@ -1,0 +1,26 @@
+title = "From one neuron to a useful network"
+scene = "NeuronToNetwork"
+
+[voice]
+pause = 0.8
+
+[captions]
+font = "Inter SemiBold"
+font_file = "Inter-SemiBold.ttf"
+size = 50
+layout = "characters"
+width = 30
+margin_left = 110
+margin_right = 155
+margin_bottom = 365
+max_words = 6
+clause_min_words = 1
+merge_short_tail = false
+provider_tokens = false
+break_long_words = true
+break_on_hyphens = true
+protected_phrases = []
+grouping = "phrases"
+
+[render]
+raw_crf = 23

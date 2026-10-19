@@ -1,0 +1,26 @@
+title = "How Does AI Actually Learn?"
+scene = "HousePriceLearningStep"
+
+[voice]
+pause = 0.65
+
+[captions]
+font = "Inter"
+font_file = "Inter.ttf"
+size = 52
+layout = "characters"
+width = 30
+margin_left = 110
+margin_right = 145
+margin_bottom = 300
+max_words = 7
+clause_min_words = 3
+merge_short_tail = true
+provider_tokens = false
+break_long_words = false
+break_on_hyphens = false
+protected_phrases = []
+grouping = "phrases"
+
+[render]
+raw_crf = 23

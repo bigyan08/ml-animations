@@ -1,14 +1,13 @@
 """One calculation expands into a layer, network, and medical-imaging workflow."""
-import json
-from pathlib import Path
 
 import manimgx as m
+
+from shared.scenes import NarratedScene
+from shared.visuals import node, connection
 import numpy as np
 
 from model import layer_outputs
 
-HERE = Path(__file__).resolve().parent
-OUTPUT = HERE.parents[3] / 'media/machine_learning/neural_networks/neuron_to_network'
 m.config.pixel_width = 1080
 m.config.pixel_height = 1920
 m.config.frame_rate = 30
@@ -26,19 +25,6 @@ def equation(value, y, size=40, color=WHITE):
     return m.MathTex(value, font_size=size, color=color).move_to([-.15, y, 0])
 
 
-def node(x, y, radius=.27, color=TEAL):
-    return m.Circle(radius=radius, color=color, fill_color='#14283A',
-                    fill_opacity=1, stroke_width=3).move_to([x, y, 0])
-
-
-def connection(a, b, color=BLUE, width=2, opacity=.5):
-    direction = b.get_center() - a.get_center()
-    direction = direction / np.linalg.norm(direction)
-    return m.Line(a.get_center() + direction * a.width / 2,
-                  b.get_center() - direction * b.width / 2, color=color,
-                  stroke_width=width, stroke_opacity=opacity)
-
-
 def network(rows=(2, 4, 4, 2), top=2.7, spacing=1.55):
     layers = []
     for i, count in enumerate(rows):
@@ -51,9 +37,11 @@ def network(rows=(2, 4, 4, 2), top=2.7, spacing=1.55):
     return m.VGroup(*links, *layers), layers, links
 
 
-class NeuronToNetwork(m.Scene):
+class NeuronToNetwork(NarratedScene):
+    pulse_radius = .055
+
     def construct(self):
-        self.beats = json.loads((OUTPUT / 'narration.json').read_text())['beats']
+        self.load_narration(__file__)
         self.heading = None
 
         # Meaningful content is present in frame one; pulses begin immediately.
@@ -201,12 +189,7 @@ class NeuronToNetwork(m.Scene):
         self.finish()
 
     def begin(self, index, title, animate=True):
-        beat = self.beats[index]
-        self.beat_start = float(self.time)
-        self.beat_duration = beat['duration']
-        self.add_sound(OUTPUT / beat['audio'])
-        for c in beat['captions']:
-            self.add_subcaption(c['text'], c['end'] - c['start'], offset=c['start'])
+        self.begin_beat(index)
         heading = m.Text(title, font='Space Grotesk', weight='BOLD', font_size=46,
                          color=WHITE, line_spacing=.1)
         if heading.width > 6.0:
@@ -221,18 +204,6 @@ class NeuronToNetwork(m.Scene):
             self.add(heading)
         self.heading = heading
 
-    def finish(self):
-        remaining = self.beat_duration - (float(self.time) - self.beat_start)
-        if remaining < 0:
-            raise ValueError(f'Animation exceeds narration beat by {-remaining:.2f}s')
-        self.wait(remaining)
-
-    def pulse(self, edges, duration, color=TEAL):
-        dots = [m.Dot(e.get_start(), radius=.055, color=color) for e in edges]
-        self.add(*dots)
-        self.play(*[m.MoveAlongPath(dot, edge) for dot, edge in zip(dots, edges)],
-                  run_time=duration, rate_func=m.linear)
-        self.remove(*dots)
 
     def scan(self, x, y):
         # An original abstract chest-scan icon, not patient data or model evidence.

@@ -1,0 +1,9 @@
+title = "How Does Simple Math Turn Into ChatGPT?"
+scene = "SimpleMathToChatGPT"
+
+[captions]
+protected_phrases = ["recommendation systems", "image AI", "gradient descent", "machine learning", "deep learning", "neural network", "neural networks", "seven point six", "negative three", "weighted sums", "nonlinear transformations", "step size", "slope and intercept", "next token", "training text", "can still", "does not", "not guarantee", "real world", "actual answer", "further training", "the other way", "negative three squared", "linear function", "linear operations", "in image models", "small step", "useful responses"]
+
+[render]
+max_duration = 300
+duration_override_reason = "User explicitly requested the complete video rather than a shortened cut."

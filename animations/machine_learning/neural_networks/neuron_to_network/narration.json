@@ -1,0 +1,44 @@
+{
+  "beats": [
+    {
+      "id": "01",
+      "title": "01 — Start with one neuron",
+      "text": "How can simple arithmetic help read a medical scan? Start with one artificial neuron."
+    },
+    {
+      "id": "02",
+      "title": "02 — A small calculation",
+      "text": "It multiplies inputs by weights, adds a bias, then applies an activation. Here, two weighted inputs produce one output."
+    },
+    {
+      "id": "03",
+      "title": "03 — Why activation matters",
+      "text": "Nonlinear activations matter. Without them, stacked layers collapse into a single weighted sum plus bias."
+    },
+    {
+      "id": "04",
+      "title": "04 — Neurons become a layer",
+      "text": "Put neurons side by side. Each has its own weights, so the same inputs produce different responses. That's a layer."
+    },
+    {
+      "id": "05",
+      "title": "05 — Layers become a network",
+      "text": "Feed those outputs into another layer, then another. Now you have one neural network: a chain of transformations."
+    },
+    {
+      "id": "06",
+      "title": "06 — Training makes it useful",
+      "text": "During training, prediction errors adjust weights and biases. More neurons alone don't make the network useful."
+    },
+    {
+      "id": "07",
+      "title": "07 — From patterns to medicine",
+      "text": "Large networks can learn complex image patterns. A validated medical imaging model can flag suspicious regions for clinicians to review."
+    },
+    {
+      "id": "08",
+      "title": "08 — The complete picture",
+      "text": "Many neurons. Multiple layers. One trained network supporting a real task."
+    }
+  ]
+}

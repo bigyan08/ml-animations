@@ -1,15 +1,13 @@
 """From a checked scalar correction to schematic layered language models."""
-import json
-import re
-from pathlib import Path
 
 import manimgx as m
+
+from shared.scenes import NarratedScene
+from shared.visuals import node, connection
 import numpy as np
 
 from model import X, Y, fit_path, regression_loss, scalar_loss
 
-HERE = Path(__file__).resolve().parent
-OUTPUT = HERE.parents[3] / 'media/machine_learning/foundations/simple_math_to_chatgpt'
 m.config.pixel_width = 1080
 m.config.pixel_height = 1920
 m.config.frame_rate = 30
@@ -27,33 +25,27 @@ def math(value, y=0, size=46, color=WHITE):
     return m.MathTex(value, font_size=size, color=color).move_to([-.2, y, 0])
 
 
-def node(x, y, color=TEAL, radius=.19):
-    return m.Circle(radius=radius, color=color, fill_color='#14283A',
-                    fill_opacity=1, stroke_width=3).move_to([x, y, 0])
-
-
 def net(counts=(2, 3, 3, 1), top=2.7, bottom=-.2):
     columns = []
     for x, count in zip(np.linspace(-2.4, 2.1, len(counts)), counts):
         ys = np.linspace(top, bottom, count) if count > 1 else [(top + bottom) / 2]
-        columns.append(m.VGroup(*[node(x, y, BLUE if len(columns) == 0 else TEAL)
+        columns.append(m.VGroup(*[node(x, y, radius=.19, color=BLUE if len(columns) == 0 else TEAL)
                                   for y in ys]))
     edges = []
     for before, after in zip(columns[:-1], columns[1:]):
         layer = m.VGroup()
         for a in before:
             for b in after:
-                d = b.get_center() - a.get_center()
-                d = d / np.linalg.norm(d)
-                layer.add(m.Line(a.get_center() + .19*d, b.get_center() - .19*d,
-                                 color=BLUE, stroke_width=2, stroke_opacity=.5))
+                layer.add(connection(a, b))
         edges.append(layer)
     return m.VGroup(*edges, *columns), columns, edges
 
 
-class SimpleMathToChatGPT(m.Scene):
+class SimpleMathToChatGPT(NarratedScene):
+    pulse_color = GOLD
+
     def construct(self):
-        self.beats = json.loads((OUTPUT / 'narration.json').read_text())['beats']
+        self.load_narration(__file__)
         self.heading = None
         self.stage = None
 
@@ -271,14 +263,7 @@ class SimpleMathToChatGPT(m.Scene):
         self.finish()
 
     def begin(self,index,title,first=False):
-        beat=self.beats[index]
-        self.beat_start=float(self.time)
-        self.beat_duration=beat['duration']
-        self.word_timings=json.loads((OUTPUT/beat['audio']).with_suffix('.json').read_text())
-        self.spoken_tokens=[re.sub(r'[^a-z0-9]', '', w.lower()) for w in beat['text'].split()]
-        self.add_sound(OUTPUT/beat['audio'])
-        for c in beat['captions']:
-            self.add_subcaption(c['text'],c['end']-c['start'],offset=c['start'])
+        self.begin_beat(index)
         heading=m.Text(title,font='Space Grotesk',weight='BOLD',font_size=39,
                        color=WHITE)
         heading.move_to([-2.9+heading.width/2,5.1-heading.height/2,0])
@@ -293,24 +278,3 @@ class SimpleMathToChatGPT(m.Scene):
             self.add(heading)
         self.heading=heading
         self.stage=None
-
-    def cue(self, phrase):
-        wanted=[re.sub(r'[^a-z0-9]', '', w.lower()) for w in phrase.split()]
-        for i in range(len(self.spoken_tokens)-len(wanted)+1):
-            if self.spoken_tokens[i:i+len(wanted)] == wanted:
-                target=self.beat_start+self.word_timings[i]['start']
-                if target > float(self.time): self.wait(target-float(self.time))
-                return
-        raise ValueError(f'Spoken cue not found: {phrase}')
-
-    def finish(self):
-        remaining=self.beat_duration-(float(self.time)-self.beat_start)
-        if remaining < 0: raise ValueError(f'Beat overrun: {-remaining:.2f}s')
-        self.wait(remaining)
-
-    def pulse(self,edges,duration):
-        dots=[m.Dot(e.get_start(),radius=.05,color=GOLD) for e in edges]
-        self.add(*dots)
-        self.play(*[m.MoveAlongPath(d,e) for d,e in zip(dots,edges)],
-                  run_time=duration,rate_func=m.linear)
-        self.remove(*dots)

@@ -1,0 +1,34 @@
+{
+  "beats": [
+    {
+      "id": "01",
+      "title": "The mismatch",
+      "text": "This model predicts one hundred thousand dollars for a house labeled two hundred thousand. How can that mistake teach it?"
+    },
+    {
+      "id": "02",
+      "title": "Make a prediction",
+      "text": "We measure size in thousands of square feet, and price in hundred-thousands. The model predicts weight times size. Here, both start at one, so it predicts one hundred thousand dollars."
+    },
+    {
+      "id": "03",
+      "title": "Measure the error",
+      "text": "The label is two. Prediction minus label is negative one. Half the squared error gives a loss of point five."
+    },
+    {
+      "id": "04",
+      "title": "Follow the slope",
+      "text": "The loss slope against the weight is error times size: negative one. Increasing the weight will lower the loss. With a step size of point five, gradient descent moves the weight from one to one point five."
+    },
+    {
+      "id": "05",
+      "title": "Check the result",
+      "text": "Now the prediction is one hundred fifty thousand dollars, and the loss falls to point one two five. This update reduced the error on this example."
+    },
+    {
+      "id": "06",
+      "title": "The learning loop",
+      "text": "Training repeats this process across examples: predict, measure error, adjust, repeat. Real models are more complex, and one example is not enough to guarantee good predictions on new houses."
+    }
+  ]
+}
