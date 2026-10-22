@@ -1,0 +1,14 @@
+title = "How Does a Straight Line Learn? — Linear Regression Explained"
+scene = "StraightLineLearns"
+
+[voice]
+speed = 1.0
+pause = 2.05420410
+
+[render]
+max_duration = 340
+duration_override_reason = "User explicitly requested a complete five-minute beginner lesson."
+
+[captions]
+size = 64
+protected_phrases = ["gradient descent", "learning rate", "mean squared error", "learn from data", "hours they study", "scored fifty", "horizontal axis", "vertical axis", "plus b", "bias or intercept", "predicted points", "the weight changes", "line downward", "twenty points", "four dots", "up or down", "b is forty", "not fifty", "not eighty", "simplified dataset", "b changes", "rate alpha", "from temperature", "and repeat"]

@@ -1,0 +1,54 @@
+{
+  "beats": [
+    {
+      "id": "hook",
+      "title": "Which line is best?",
+      "text": "Which separating line should a machine choose? Imagine two groups of students. Some passed their exam, and others failed. We want to predict whether a new student will pass from study hours and practice sets completed. We could draw a line separating the groups. But several different lines classify these examples correctly. Some pass dangerously close to a student. Which boundary gives us the most room? That's the question behind a Support Vector Machine."
+    },
+    {
+      "id": "data",
+      "title": "Two features, one label",
+      "text": "First, let's understand our data. Each student has two features: study hours and practice sets completed. Hours go along the horizontal axis, and practice sets go up the vertical axis. Each dot is one student in this simplified example. Orange means failed, labeled negative one. Teal means passed, labeled positive one. These are labeled training examples. We use them to learn a boundary, then test predictions on new students."
+    },
+    {
+      "id": "decision",
+      "title": "A score chooses a side",
+      "text": "To describe the boundary, we use two weights and one bias. The weights control its direction, while the bias controls its position. Multiply each feature by its weight, add the results, then add the bias. This produces a decision score. Positive means pass; negative means fail. Zero lies on the boundary. For our example, the score is study hours plus practice sets minus five. At two and two, the score is negative one: fail. At three and three, it's positive one: pass."
+    },
+    {
+      "id": "margin",
+      "title": "Make room on both sides",
+      "text": "Now we can separate the groups. But which line is best? A boundary very close to a training point can change its prediction after a tiny change in that student's features. A hard margin S V M chooses the largest empty margin between the classes. We measure this distance perpendicular to the boundary. Watch the room on the narrow side grow as the line becomes balanced. Here the two supporting lines are the same distance from the boundary. Feature scales matter because they change these distances."
+    },
+    {
+      "id": "support",
+      "title": "The points that matter",
+      "text": "Look at the two closest students: the failed student at two hours and two practice sets, and the passing student at three hours and three sets. They touch the edges of the margin. These are our support vectors. In this example, they determine the maximum margin boundary. Other points can move without changing it, as long as they don't become critical. The two supporting lines have feature sums of four and six. The decision boundary sits halfway between, at five."
+    },
+    {
+      "id": "optimization",
+      "title": "Turn width into an objective",
+      "text": "How does the computer find that line? First, scale its equation so the supporting points have scores of negative one and positive one. Then the full margin width is two divided by the length of the weight vector. Here, both weights are one, giving a width of square root two. Maximizing this width means minimizing half the sum of squared weights. The constraint requires every training point to be on or beyond its correct margin. The solver finds weights and bias that satisfy these rules."
+    },
+    {
+      "id": "soft",
+      "title": "Allow a compromise",
+      "text": "Real data is rarely this clean. Add a passing student between our two failed students. No straight line can separate all these labels perfectly. A soft margin S V M permits margin violations, including misclassifications, and penalizes them. A slack variable measures each violation. The objective balances small weights against the total slack penalty. C controls that balance. Larger C penalizes violations more strongly. Smaller C gives the wide margin relatively more emphasis. Neither setting guarantees better predictions on new data."
+    },
+    {
+      "id": "kernel",
+      "title": "When a line is not enough",
+      "text": "Now consider a different pattern: passing students in the center, surrounded by failing students. No straight line can isolate the center. A kernel measures similarity as though points were represented in another feature space. This lets an S V M produce a nonlinear boundary. An R B F kernel gives nearby points greater similarity, and can wrap a curved boundary around this cluster. Gamma controls how quickly similarity falls with distance. This is a new illustrative dataset, not the original student example."
+    },
+    {
+      "id": "python",
+      "title": "Train it in Python",
+      "text": "Back to our original students. In Python, import S V C from scikit learn. Choose a linear kernel and a large C for this separable example, then fit the labeled data. The model stores its weights, bias, and support vectors. Give it a student with two point eight study hours and two point six practice sets. The decision score is zero point four, so it predicts pass. That score is not a probability. For a different pattern, we could choose an R B F kernel instead."
+    },
+    {
+      "id": "closing",
+      "title": "Which line did it choose?",
+      "text": "That's the idea behind Support Vector Machines. Find a boundary with a wide margin, let the support vectors determine where it goes, and control violations when the data overlaps. The best boundary still needs to be tested on new examples."
+    }
+  ]
+}

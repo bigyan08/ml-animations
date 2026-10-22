@@ -16,7 +16,8 @@ import wave
 import numpy as np
 
 from shared.captions import CaptionLayout, ass_time
-from shared.config import CaptionStyle, LessonConfig, ROOT, RenderSettings
+from shared.config import CaptionStyle, LessonConfig, ROOT, RenderSettings, VoiceSettings
+from shared.elevenlabs import CreditsUnavailable, CREDIT_MESSAGE
 from shared.narration import NarrationPipeline
 from shared.rendering import finalize, verify
 from shared.scenes import NarratedScene
@@ -29,7 +30,7 @@ class ProductionTests(unittest.TestCase):
         (self.root/'pyproject.toml').write_text('[project]\nname="fixture"\n')
         self.directory = self.root/'animations/math/optimization/example'
         self.directory.mkdir(parents=True)
-        (self.directory/'lesson.toml').write_text('title="Example"\nscene="Example"\n')
+        (self.directory/'lesson.toml').write_text('title="Example"\nscene="Example"\n[voice]\nprovider="edge"\n')
         self.source = {'beats': [
             {'id':'predict', 'title':'Prediction', 'text':'Try gradient descent now.'},
             {'id':'check', 'title':'Check', 'text':'Measure the new loss.'},
@@ -92,6 +93,80 @@ class ProductionTests(unittest.TestCase):
             self.build(offline=True)
         self.assertEqual(self.calls, [])
         self.assertFalse((self.lesson.output/'narration.json').exists())
+
+    def test_elevenlabs_default_dispatch_context_cache_and_provider_isolation(self):
+        (self.directory/'lesson.toml').write_text('title="Example"\nscene="Example"\n')
+        lesson = LessonConfig.load(self.directory)
+        self.assertEqual(lesson.voice.provider, 'elevenlabs')
+        contexts = []
+        async def eleven(text, voice, path, **context):
+            contexts.append(context)
+            return await self.speech(text, voice, path)
+        with patch('shared.narration.elevenlabs_speech', side_effect=eleven) as provider, \
+                patch('shared.narration.edge_speech') as edge:
+            result = asyncio.run(NarrationPipeline(lesson).build())
+            self.assertEqual(result['provider'], 'ElevenLabs')
+            self.assertEqual(result['model'], 'eleven_multilingual_v2')
+            self.assertEqual(contexts[0]['next_text'], self.source['beats'][1]['text'])
+            asyncio.run(NarrationPipeline(lesson).build(offline=True))
+            asyncio.run(NarrationPipeline(lesson).build())
+            self.assertEqual(provider.call_count, 2)
+            changed = replace(lesson, voice=replace(lesson.voice, speed=1.0))
+            with self.assertRaisesRegex(ValueError, 'offline mode'):
+                asyncio.run(NarrationPipeline(changed).build(offline=True))
+            self.source['beats'][1]['text'] = 'Measure a different loss.'
+            self.write_source()
+            asyncio.run(NarrationPipeline(lesson).build())
+            self.assertEqual(provider.call_count, 4)  # Neighbor context also changed.
+            edge.assert_not_called()
+        self.build()  # Explicit Edge uses separate caches and historical filenames.
+        self.assertEqual(len(self.calls), 6)
+
+    def test_elevenlabs_quota_failure_retains_completed_beats_for_resume(self):
+        lesson = replace(self.lesson, voice=VoiceSettings())
+        calls = 0
+        async def fail_second(text, voice, path, **context):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise CreditsUnavailable(CREDIT_MESSAGE)
+            return await self.speech(text, voice, path)
+        with patch('shared.narration.elevenlabs_speech', side_effect=fail_second), \
+                patch('shared.narration.edge_speech') as edge:
+            with self.assertRaises(CreditsUnavailable):
+                asyncio.run(NarrationPipeline(lesson).build())
+            self.assertEqual(len(list(lesson.output.glob('voice_*.mp3'))), 1)
+            self.assertFalse((lesson.output/'narration.json').exists())
+            self.assertEqual(list(lesson.output.glob('*.partial')), [])
+            asyncio.run(NarrationPipeline(lesson).build())
+            self.assertEqual(calls, 3)
+            edge.assert_not_called()
+
+    def test_edge_retains_historical_cache_names_and_fingerprint(self):
+        result = self.build()
+        text = self.source['beats'][0]['text']
+        key = hashlib.sha256(f'en-US-AndrewNeural|-5%|{text}'.encode()).hexdigest()[:12]
+        self.assertEqual(result['beats'][0]['audio'], f'voice_01_{key}.mp3')
+        from dataclasses import asdict
+        old = {'beats': self.source['beats'],
+               'voice': {'name': 'en-US-AndrewNeural', 'rate': '-5%', 'pause': .65},
+               'captions': asdict(self.lesson.captions)}
+        self.assertEqual(self.lesson.fingerprint(),
+                         hashlib.sha256(json.dumps(old, sort_keys=True).encode()).hexdigest())
+
+    def test_cli_reports_missing_elevenlabs_key_without_traceback(self):
+        from shared.__main__ import main
+        (self.directory/'lesson.toml').write_text('title="Example"\nscene="Example"\n')
+        output = io.StringIO()
+        with patch.dict(os.environ, {'ELEVENLABS_API_KEY': ''}), \
+                patch('sys.argv', ['shared', 'narrate', str(self.directory)]), \
+                patch('shared.elevenlabs.urlopen') as request, contextlib.redirect_stderr(output):
+            with self.assertRaises(SystemExit) as caught:
+                main()
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn('Set ELEVENLABS_API_KEY', output.getvalue())
+        self.assertNotIn('Traceback', output.getvalue())
+        request.assert_not_called()
 
     def test_provider_failure_preserves_previous_manifest_and_removes_partial(self):
         self.build()

@@ -1,0 +1,54 @@
+{
+  "beats": [
+    {
+      "id": "hook",
+      "title": "Can a line learn?",
+      "text": "Can a straight line actually learn from data? Imagine you're trying to predict a student's exam score from how many hours they study. You have a few examples, but you want to make a prediction for a student you haven't seen before. Instead of guessing, we'll let a line learn the pattern. By the end, you'll know what its two numbers mean, and how the computer finds them."
+    },
+    {
+      "id": "data",
+      "title": "Four observations",
+      "text": "Let's start with four students. One studied for one hour and scored fifty. Two hours gave sixty, three hours gave seventy, and four hours gave eighty. Place these examples on a graph. Study hours go along the horizontal axis, and exam scores go up the vertical axis. Each dot is one observation in our simplified example. Our goal is to draw one line that describes their relationship and predicts scores between these examples."
+    },
+    {
+      "id": "equation",
+      "title": "Two adjustable numbers",
+      "text": "Here is the entire model: predicted score equals w times x, plus b. The input x is study time, and y hat is the predicted score. We call w the weight, or slope, and b the bias, or intercept. For example, if w is ten and b is forty, three hours gives ten times three plus forty, or seventy. But the formula matters less than what those two numbers do to the line."
+    },
+    {
+      "id": "weight",
+      "title": "Change the tilt",
+      "text": "First, keep the bias fixed at forty and change only w. When w is zero, the line is flat: it predicts forty, no matter how long a student studies. Increase w to five, and the line tilts upward. Make it ten, and each extra hour adds ten predicted points. Notice how the line rotates as the weight changes. The weight controls how strongly the prediction responds to x. A negative weight would tilt the line downward."
+    },
+    {
+      "id": "bias",
+      "title": "Change the height",
+      "text": "Now freeze the weight at ten and change the bias. With b equal to zero, the line begins at zero. With b equal to twenty, the whole line slides upward by twenty points. At forty, it passes through all four dots. The slope hasn't changed at all; only the starting height has. So remember: the weight changes the tilt, and the bias moves the line up or down. Together, they determine every prediction."
+    },
+    {
+      "id": "loss",
+      "title": "Measure the mistakes",
+      "text": "But how does the computer know which line is good? We measure how far its predictions are from the real scores. Suppose w is five and b is forty. After one hour, it predicts forty five, not fifty. After four hours, it predicts sixty, not eighty. Square each prediction error and take the average over all four examples. That gives mean squared error, or M S E: here, one hundred eighty seven point five. Squaring prevents opposite errors from canceling, and penalizes larger errors more. At w ten and b forty, the error is zero for this simplified dataset."
+    },
+    {
+      "id": "gradients",
+      "title": "Find a direction",
+      "text": "Now comes the learning. We don't tell the model the correct weight and bias. We start with guesses, even zero for both, calculate the predictions, and measure the error. Then we use derivatives to ask how the error changes when w or b changes. These are called gradients. A positive gradient tells us that increasing that parameter increases the loss locally. A negative gradient points the other way."
+    },
+    {
+      "id": "training",
+      "title": "Adjust and repeat",
+      "text": "We subtract a small fraction of each gradient from its parameter. That fraction is controlled by the learning rate, alpha. Here, alpha is zero point zero five. Both gradients use the same current predictions, then both parameters update. Repeat this many times, and watch the line tilt, shift, and settle onto the data as the error shrinks. The weight initially goes past ten, while the bias catches up. This repeating process is gradient descent. A learning rate that's too large can make training fail."
+    },
+    {
+      "id": "python",
+      "title": "The learning loop",
+      "text": "In Python, it's just a loop. Compute predictions. Subtract actual scores to get errors. Calculate one gradient for the weight and another for the bias, and update both. Run the loop five hundred times, and the model learns values close to ten and forty. Now imagine a student studies for two and a half hours. Plugging that into our learned line gives a predicted score of about sixty five. That's a prediction, not a guarantee."
+    },
+    {
+      "id": "closing",
+      "title": "What did it learn?",
+      "text": "And that's linear regression: choose a slope and an intercept that minimize prediction error. The same idea can estimate house prices from floor area or energy use from temperature. Real world dots are messier, and other factors matter, so predictions aren't perfect. A good training fit alone doesn't prove accuracy on new students. But the core process is simple: predict, measure the error, adjust the line, and repeat."
+    }
+  ]
+}

@@ -11,3 +11,5 @@ wheels/
 
 # Reproducible generated videos, audio, captions, and storyboards
 media/
+
+.env

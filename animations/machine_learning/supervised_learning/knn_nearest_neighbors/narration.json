@@ -1,0 +1,54 @@
+{
+  "beats": [
+    {
+      "id": "hook",
+      "title": "Pass or fail?",
+      "text": "Imagine a student who studied for three hours and completed three practice sets. Will this student pass or fail? What if we could answer simply by finding students with similar study habits? No complicated equation to learn. No straight line to fit. Find the most similar students and see what happened to them. That's the main idea behind K Nearest Neighbors, or K N N."
+    },
+    {
+      "id": "data",
+      "title": "Meet the student records",
+      "text": "Let's visualize our student records. Hours studied go along the horizontal axis. Practice sets completed go up the vertical axis. Orange dots are students who failed; teal dots are students who passed. Our yellow star is the new student at three hours and three sets. We don't know the result yet. These ten examples are illustrative. We'll keep them fixed while we decide which ones should vote."
+    },
+    {
+      "id": "distance",
+      "title": "Measure similarity",
+      "text": "First, we need a way to measure similarity. Let's zoom into the nearby students. A simple choice is straight line distance. Subtract the study hours, square the difference, and do the same for practice sets. Add those squares, then take the square root. This is Euclidean distance. Our student is zero point two units from the closest failed student, but zero point five from the closest passing student. Smaller distance means a closer neighbor. We can now sort the examples from nearest to farthest."
+    },
+    {
+      "id": "vote",
+      "title": "Let three neighbors vote",
+      "text": "K tells us how many nearby students to consider. Suppose K equals three. Select the three closest examples. The nearest student failed, but the next two passed. That gives two votes for pass and one vote for fail. The majority wins, so our prediction is pass. Here, zero means fail and one means pass. We take the most common label among zero, one, one. We haven't learned a line or weights. We've used the outcomes of nearby examples."
+    },
+    {
+      "id": "change",
+      "title": "Same student, different K",
+      "text": "But why choose three? Why not one, or five? With K equal to one, only the closest student votes. That student failed, so we predict fail. With three neighbors, two passed, and our prediction changes to pass. With five neighbors, three failed, so the prediction changes back to fail. Nothing about our students changed. Only the number of voters changed. A tiny K can react strongly to individual examples. A very large K may overlook local patterns."
+    },
+    {
+      "id": "regions",
+      "title": "A map of predictions",
+      "text": "K changes more than this one prediction. Imagine classifying every possible location on our graph. These colored regions show the predictions, with all ten training examples held fixed. At K equal to one, individual points have strong local influence. With three and five, more neighbors vote together. Larger neighborhoods often reduce sensitivity to individual examples, but the boundaries don't have to become smoother everywhere. Small K may overfit; very large K may underfit. Choose K using validation data, then evaluate on separate test data."
+    },
+    {
+      "id": "scaling",
+      "title": "Units change distance",
+      "text": "Distance depends on feature scales. Imagine changing study hours to minutes. Three hours becomes one hundred eighty minutes, while practice sets stay unchanged. The same difference of zero point four hours becomes twenty four minutes. That change can make study time dominate the distance calculation. A common solution is standardization: subtract each feature's mean and divide by its standard deviation. Fit that transformation on training data only. Apply the same transformation to validation examples and new students. This avoids leaking information from future evaluation data."
+    },
+    {
+      "id": "lazy",
+      "title": "Store now, search later",
+      "text": "Does K N N train like linear regression or an S V M? Ordinary K N N stores the labeled training examples, sometimes organizing them to speed up search. When a new student arrives, it measures distances, selects neighbors, and predicts. That's why it's called lazy learning. There are no fitted prediction weights in this standard version. But more stored examples can mean more memory and more search work. The cost depends on the search method and the number of features."
+    },
+    {
+      "id": "python",
+      "title": "Make the prediction in Python",
+      "text": "Let's implement it in Python, using our original unscaled illustrative data. Create a K Nearest Neighbors classifier with three neighbors. Fit the ten feature pairs and their labels. Now predict for the student at three hours and three practice sets. The model finds labels zero, one, one. Two students passed, so the prediction is one: pass. In a practical workflow, put scaling and K N N together in a pipeline, and choose K using validation rather than this single example."
+    },
+    {
+      "id": "closing",
+      "title": "Neighbors become a prediction",
+      "text": "And that's K Nearest Neighbors. Compare a new observation with stored examples, find the nearest K, and combine their outcomes. Classification uses a vote. Regression can average nearby target values instead. Similar observations often have similar outcomes, but useful predictions still need to be checked on new data."
+    }
+  ]
+}

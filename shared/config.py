@@ -15,6 +15,20 @@ class VoiceSettings:
     name: str = 'en-US-AndrewNeural'
     rate: str = '-5%'
     pause: float = 0.65
+    provider: str = 'elevenlabs'
+    voice_id: str = 'JBFqnCBsd6RMkjVDRZzb'
+    model_id: str = 'eleven_multilingual_v2'
+    stability: float = 0.5
+    similarity_boost: float = 0.75
+    style: float = 0.0
+    speed: float = 0.95
+    use_speaker_boost: bool = True
+
+    def synthesis_settings(self):
+        if self.provider == 'edge':
+            return {'provider': 'edge', 'name': self.name, 'rate': self.rate}
+        return {key: value for key, value in asdict(self).items()
+                if key not in {'name', 'rate', 'pause'}}
 
 
 @dataclass(frozen=True)
@@ -91,6 +105,17 @@ class LessonConfig:
         return result
 
     def validate(self):
+        if self.voice.provider not in {'elevenlabs', 'edge'}:
+            raise ValueError('Voice provider must be elevenlabs or edge')
+        if not self.voice.voice_id.strip() or not self.voice.model_id.strip():
+            raise ValueError('ElevenLabs voice_id and model_id must be nonempty')
+        for key in ('stability', 'similarity_boost', 'style'):
+            if not 0 <= getattr(self.voice, key) <= 1:
+                raise ValueError(f'Voice {key} must be between 0 and 1')
+        if not 0.7 <= self.voice.speed <= 1.2:
+            raise ValueError('Voice speed must be between 0.7 and 1.2')
+        if not isinstance(self.voice.use_speaker_boost, bool):
+            raise ValueError('Voice use_speaker_boost must be boolean')
         if self.voice.pause < 0 or not math.isfinite(self.voice.pause):
             raise ValueError('Voice pause must be finite and nonnegative')
         if self.captions.layout not in {'measured', 'characters'}:
@@ -139,7 +164,10 @@ class LessonConfig:
         return beats
 
     def fingerprint(self):
-        value = {'beats': self.source(), 'voice': asdict(self.voice),
+        voice = {**self.voice.synthesis_settings(), 'pause': self.voice.pause}
+        if self.voice.provider == 'edge':
+            del voice['provider']  # Preserve historical Edge build fingerprints.
+        value = {'beats': self.source(), 'voice': voice,
                  'captions': asdict(self.captions)}
         return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 

@@ -1,0 +1,14 @@
+title = "How Does AI Predict Using Its Nearest Neighbors? — KNN Explained"
+scene = "KNNNearestNeighbors"
+
+[voice]
+speed = 1.08
+pause = 1.35673470
+
+[captions]
+size = 64
+protected_phrases = ["K Nearest Neighbors", "K N N", "S V M", "practice sets", "study hours", "horizontal axis", "vertical axis", "training examples", "validation data", "test data", "new students", "new data", "Euclidean distance", "square root", "zero point two", "zero point five", "zero point four", "twenty four minutes", "nearest neighbors", "lazy learning", "standard deviation", "three neighbors", "predict fail", "predict pass", "one pass", "one fail", "two passed", "three failed", "local patterns", "new student", "one one", "measure similarity", "prediction is pass", "one means pass", "nearby examples", "changes to pass", "illustrative data", "their labels", "values instead"]
+
+[render]
+max_duration = 350
+duration_override_reason = "User explicitly requested a complete five-minute KNN lesson."

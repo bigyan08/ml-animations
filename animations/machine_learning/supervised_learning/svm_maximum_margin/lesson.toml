@@ -1,0 +1,14 @@
+title = "How Does a Machine Find the Perfect Boundary? — SVM Explained"
+scene = "SVMMaximumMargin"
+
+[voice]
+speed = 1.08
+pause = 1.66759190
+
+[captions]
+size = 64
+protected_phrases = ["Support Vector Machine", "Support Vector Machines", "support vectors", "decision boundary", "practice sets", "study hours", "negative one", "positive one", "hard margin", "soft margin", "S V M", "R B F", "S V C", "square root two", "not a probability", "new students", "new examples", "feature space", "training examples", "maximum margin", "scikit learn", "machine choose", "the groups", "vertical axis", "negative one fail", "positive one pass", "the classes", "maximum margin boundary", "weight vector", "each violation", "data overlaps"]
+
+[render]
+max_duration = 350
+duration_override_reason = "User explicitly requested a complete five-minute SVM lesson."

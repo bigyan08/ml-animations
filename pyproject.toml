@@ -10,4 +10,5 @@ dependencies = [
     "contourpy==1.4.0",
     "edge-tts==7.3.1",
     "pillow>=13,<14",
+    "scikit-learn>=1.7,<2",
 ]
